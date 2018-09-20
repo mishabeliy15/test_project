@@ -4,7 +4,7 @@ from my_parser import *
 import youtube_dl
 import os
 
-token = ""
+token = "464958591:AAG6_2iK9BePRuWyMvCg5vejzixlunfNz64"
 bot = telebot.TeleBot(token)
 
 
@@ -18,6 +18,7 @@ def handle_text(message):
         inlineKey = types.InlineKeyboardMarkup()
         row = []
         for i in range(5):
+            print("[" + parse.req_search + " | " + parse.videos[i].name + "] " + parse.videos[i].url)
             callback_button = types.InlineKeyboardButton(text=str(i + 1),callback_data=parse.videos[i].url)
             row.append(callback_button)
         inlineKey.row(*row)
