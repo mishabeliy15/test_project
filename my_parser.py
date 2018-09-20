@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import json
 
 class Parsing:
     youtube_search = 'https://www.youtube.com/results?sp=EgIQAQ%253D%253D&search_query='
@@ -40,12 +41,11 @@ class Parsing:
         for i in self.blocks_a:
             self.videos.append(Video(i))
 
-class Video:
-    youtube = 'https://www.youtube.com'
+youtube = 'https://www.youtube.com'
+class Video():
     def __init__(self,soup):
-        self.soup = soup
         self.name = soup.text
-        self.url = self.youtube + soup.attrs['href']
+        self.url = youtube + soup.attrs['href']
 
     def __str__(self):
         return self.name
