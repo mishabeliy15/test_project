@@ -4,7 +4,7 @@ from my_parser import *
 import youtube_dl
 import os
 
-token = ""
+token = "541246088:AAFL0Ph2TE8iiCVFq9Io2zhFXhUjZrcj9tQ"
 bot = telebot.TeleBot(token)
 
 parse = None
@@ -42,42 +42,32 @@ def callback_inline(call):
     if parse != None:
         mp3_video(parse.videos[i], call.message)
 
+
+def download_mp3_from_video(url,name):
+    outtmpl = name + '.%(ext)s'
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'outtmpl': outtmpl,
+        'postprocessors': [
+            {'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', },
+            {'key': 'FFmpegMetadata'},
+        ],
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+
 def mp3_video(video, message): #Вместо урла принимает объект класса Video with name and url
-    name = video.name
-    options = {
-    'format': 'bestaudio/best',
-    'outtmpl': name + '.mp3',
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '192',
-    }],
-}
-    with youtube_dl.YoutubeDL(options) as ydl:
-        ydl.download([video.url])
-    audi = open(name + ".mp3", 'rb')
-    #bot.send_chat_action(message.chat.id, 'upload_audio')
+    download_mp3_from_video(video.url, video.name)
+    audi = open(video.name + ".mp3", 'rb')
     bot.send_audio(message.chat.id, audi)
     audi.close()
-    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), name + '.mp3')
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), video.name + '.mp3')
     os.remove(path)
 
 def mp3(link, message):
     name = get_name(link)
-    options = {
-        'format': 'bestaudio/best',
-        'extractaudio': True,
-        'audioformat': 'mp3',
-        'outtmpl': name + '.mp3',
-        'noplaylist': True,
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-    with youtube_dl.YoutubeDL(options) as ydl:
-        ydl.download([link])
+    download_mp3_from_video(link, name)
     audi = open(name + ".mp3", 'rb')
     bot.send_chat_action(message.from_user.id, 'upload_audio')
     bot.send_audio(message.from_user.id, audi)
