@@ -16,7 +16,7 @@ class Parsing:
         return r.text
 
     def parsing_videos(self):
-        self.blocks_a = self.site.find_all('a', {'class': 'yt-uix-tile-link'})
+        self.blocks_a = self.site.select('a[class*="yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link"]')
 
     def get_names_to_str(self):
         s = ""
@@ -38,7 +38,9 @@ class Parsing:
 
     def to_videos(self):
         for i in self.blocks_a:
-            self.videos.append(Video(i))
+            temp = Video(i)
+            if len(temp.url) < 100:
+                self.videos.append(temp)
 
 youtube = 'https://www.youtube.com'
 class Video():

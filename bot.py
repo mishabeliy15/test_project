@@ -4,9 +4,10 @@ from my_parser import *
 import youtube_dl
 import os
 
-token = "464958591:AAG6_2iK9BePRuWyMvCg5vejzixlunfNz64"
+token = ""
 bot = telebot.TeleBot(token)
 
+N = 8
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
@@ -17,12 +18,12 @@ def handle_text(message):
         parse = Parsing(message.text)
         inlineKey = types.InlineKeyboardMarkup()
         row = []
-        for i in range(5):
+        for i in range(N):
             print("[" + parse.req_search + " | " + parse.videos[i].name + "] " + parse.videos[i].url)
             callback_button = types.InlineKeyboardButton(text=str(i + 1),callback_data=parse.videos[i].url)
             row.append(callback_button)
         inlineKey.row(*row)
-        bot.send_message(message.chat.id, parse.get_names_to_str(5),reply_markup=inlineKey)
+        bot.send_message(message.chat.id, parse.get_names_to_str(N),reply_markup=inlineKey)
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
