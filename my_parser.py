@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-import json
 
 class Parsing:
     youtube_search = 'https://www.youtube.com/results?sp=EgIQAQ%253D%253D&search_query='
