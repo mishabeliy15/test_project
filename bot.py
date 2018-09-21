@@ -4,7 +4,7 @@ from my_parser import *
 import youtube_dl
 import os
 
-token = ""
+token = "464958591:AAG6_2iK9BePRuWyMvCg5vejzixlunfNz64"
 bot = telebot.TeleBot(token)
 
 N = 8
@@ -29,7 +29,7 @@ def handle_text(message):
 def callback_inline(call):
     url = str(call.data)
     if url != '':
-        mp3(url, call.message,parse_name=False)
+        mp3(url, call.message,parse_name=True)
 
 
 def download_mp3_from_video(url,name):

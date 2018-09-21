@@ -54,4 +54,5 @@ class Video():
 def get_name(url):
     soup = BeautifulSoup(requests.get(url).text,'lxml')
     name = soup.select('span[class*="watch-title"]')
-    return name[0].attrs['title']
+    name = name[0].attrs['title'].lower().replace(',', '_').replace('.', '_').replace(' ', '_')
+    return name
