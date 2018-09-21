@@ -4,7 +4,7 @@ from my_parser import *
 import youtube_dl
 import os
 
-token = ""
+token = "541246088:AAFL0Ph2TE8iiCVFq9Io2zhFXhUjZrcj9tQ"
 bot = telebot.TeleBot(token)
 
 N = 8 #Count of request

@@ -27,7 +27,7 @@ class Parsing:
         count = 0
         for i in self.videos:
             count += 1
-            s += str(count) + ") " + i.name + "\n"
+            s += str(count) + ") " + i.name + " | " + str(round(i.time_s / 60, 2)) + " min.""\n"
             if count == n:
                 break
         return s
@@ -61,7 +61,7 @@ class Video():
         self.time_s = time
 
     def __str__(self):
-        return self.name
+        return self.name + " | " + str(round(self.time_s / 60)) + "min."
 
 
 def get_name(url):
