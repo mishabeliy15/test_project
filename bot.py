@@ -4,7 +4,7 @@ from my_parser import *
 import youtube_dl
 import os
 
-token = "541246088:AAFL0Ph2TE8iiCVFq9Io2zhFXhUjZrcj9tQ"
+token = ""
 bot = telebot.TeleBot(token)
 
 N = 8 #Count of request
@@ -58,4 +58,13 @@ def download_mp3_from_video(url, name):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
 
-bot.polling(none_stop=True)
+				
+count = 0
+while True:
+    try:
+        count += 1
+        bot.polling()
+    except Exception as e:
+        print(str(e))
+        print(count)
+        bot.stop_polling()
