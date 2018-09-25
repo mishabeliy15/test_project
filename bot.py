@@ -28,7 +28,7 @@ def handle_text(message):
             callback_button = types.InlineKeyboardButton(text=str(i + 1), callback_data=parse.videos[i].url)
             row.append(callback_button)
         inlineKey.row(*row)
-        bot.send_message(message.chat.id, parse.get_names_to_str(n), reply_markup=None)
+        bot.send_message(message.chat.id, parse.get_names_to_str(n), reply_markup=inlineKey)
 
 
 @bot.callback_query_handler(func=lambda call: True)
