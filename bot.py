@@ -19,6 +19,7 @@ def handle_text(message):
         working.append(message.chat.id)
         if message.text.split("//")[0] == ("https:" or "http:"):
             link = message.text
+            bot.send_message(message.chat.id, "Your video in processing. Don't try flood! Your all requests ignore, while processing.")
             mp3(link, message)
         else:
             parse = Parsing(message.text)
@@ -39,6 +40,7 @@ def callback_inline(call):
     url = str(call.data)
     if url != '' and call.message.chat.id not in working:
         working.append(call.message.chat.id)
+        bot.send_message(call.message.chat.id, "Your video in processing. Don't try flood! Your all requests ignore, while processing.")
         mp3(url, call.message, parse_name=True)
         working.remove(call.message.chat.id)
 
