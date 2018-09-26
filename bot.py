@@ -15,29 +15,32 @@ working = []
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    if message.text.split("//")[0] == ("https:" or "http:"):
-        link = message.text
-        mp3(link, message)
-    else:
-        parse = Parsing(message.text)
-        inlineKey = types.InlineKeyboardMarkup()
-        row = []
-        n = N if N <= len(parse.videos) else len(parse.videos)
-        for i in range(n):
-            print("[" + parse.req_search + " | " + parse.videos[i].name + "] " + parse.videos[i].url)
-            callback_button = types.InlineKeyboardButton(text=str(i + 1), callback_data=parse.videos[i].url)
-            row.append(callback_button)
-        inlineKey.row(*row)
-        bot.send_message(message.chat.id, parse.get_names_to_str(n), reply_markup=inlineKey)
+    if message.chat.id not in working:
+        working.append(message.chat.id)
+        if message.text.split("//")[0] == ("https:" or "http:"):
+            link = message.text
+            mp3(link, message)
+        else:
+            parse = Parsing(message.text)
+            inlineKey = types.InlineKeyboardMarkup()
+            row = []
+            n = N if N <= len(parse.videos) else len(parse.videos)
+            for i in range(n):
+                print("[" + parse.req_search + " | " + parse.videos[i].name + "] " + parse.videos[i].url)
+                callback_button = types.InlineKeyboardButton(text=str(i + 1), callback_data=parse.videos[i].url)
+                row.append(callback_button)
+            inlineKey.row(*row)
+            bot.send_message(message.chat.id, parse.get_names_to_str(n), reply_markup=inlineKey)
+        working.remove(message.chat.id)
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     url = str(call.data)
-    if url != '' and url not in working:
-        working.append(url)
+    if url != '' and call.message.chat.id not in working:
+        working.append(call.message.chat.id)
         mp3(url, call.message, parse_name=True)
-        working.remove(url)
+        working.remove(call.message.chat.id)
 
 
 def mp3(link, message, parse_name=True):
@@ -79,5 +82,4 @@ while True:
         bot.polling()
     except Exception as e:
         logging(str(count) + " | " + str(e))
-        bot.stop_polling()
         time.sleep(15)
