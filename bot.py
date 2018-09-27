@@ -7,7 +7,7 @@ import os
 import datetime
 from UserBot import UserBot
 
-token = ""
+token = "464958591:AAG6_2iK9BePRuWyMvCg5vejzixlunfNz64"
 bot = telebot.TeleBot(token)
 
 N = 8 #Count of request
@@ -31,7 +31,7 @@ def handle_text(message):
             link = message.text
             bot.send_message(message.chat.id, "Your video in processing. Don't try flood! Your all requests ignore, while processing.")
             mp3(link, message)
-        else:
+        elif valid_req(message.text):
             parse = Parsing(message.text)
             inlineKey = types.InlineKeyboardMarkup()
             row = []
@@ -98,6 +98,15 @@ def valid_url(url):
     temp1 = url.split("https://www.")
     if len(temp1) > 1 and temp1[1].find(".com/watch?v=") != -1:
         f = True
+    return f
+
+def valid_req(s):
+    f = False
+    for i in range(len(s)):
+        temp = ord(s.lower()[i])
+        if (temp >= 97 and temp <= 122) or (temp >= 1072 and temp <= 1103):
+            f = True
+            break
     return f
 
 count = 0
