@@ -7,7 +7,7 @@ import os
 import datetime
 from UserBot import UserBot
 
-token = "464958591:AAG6_2iK9BePRuWyMvCg5vejzixlunfNz64"
+token = ""
 bot = telebot.TeleBot(token)
 
 N = 8 #Count of request
@@ -43,7 +43,7 @@ def handle_text(message):
             inlineKey.row(*row)
             bot.send_message(message.chat.id, parse.get_names_to_str(n), reply_markup=inlineKey)
         working.remove(message.chat.id)
-        user.update(5)
+        user.update()
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -58,17 +58,20 @@ def callback_inline(call):
         if user == None:
             users[call.message.chat.id] = UserBot(call.message.chat.id)
         else:
-            user.update(5)
+            user.update()
 
 
 def mp3(link, message, parse_name=True):
-    name = get_name(link) if parse_name else "temp"
-    download_mp3_from_video(link, name)
-    audi = open(name + ".mp3", 'rb')
-    bot.send_audio(message.chat.id, audi)
-    audi.close()
-    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), name + '.mp3')
-    os.remove(path)
+    try:
+        name = get_name(link) if parse_name else "temp"
+        download_mp3_from_video(link, name)
+        audi = open(name + ".mp3", 'rb')
+        bot.send_audio(message.chat.id, audi)
+        audi.close()
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), name + '.mp3')
+        os.remove(path)
+    except Exception as e:
+        logging(str(e))
 
 def download_mp3_from_video(url, name):
     outtmpl = name + '.%(ext)s'
@@ -97,6 +100,8 @@ def valid_url(url):
     f = False
     temp1 = url.split("https://www.")
     if len(temp1) > 1 and temp1[1].find(".com/watch?v=") != -1:
+        f = True
+    if url.find('youtu.be/') != -1:
         f = True
     return f
 

@@ -5,7 +5,7 @@ class UserBot:
         self.chat_id = id_chat
         self.last_time = time()
 
-    def update(self, interval):
+    def update(self, interval=0):
         now = time()
         if(now - self.last_time >= interval):
             self.last_time = now
