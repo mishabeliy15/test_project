@@ -1,23 +1,33 @@
 import time
-
 import telebot
 from telebot import types
 from my_parser import *
 import youtube_dl
 import os
 import datetime
+from UserBot import UserBot
 
 token = ""
 bot = telebot.TeleBot(token)
 
 N = 8 #Count of request
 working = []
+users = {}
+
+@bot.message_handler(commands=['start', 'help'])
+def command_help(message):
+    pass
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    if message.chat.id not in working:
+    id_ch = message.chat.id
+    user = users.get(id_ch)
+    if (id_ch not in working) and (user == None or user.update(5)):
+        if user == None:
+            users[id_ch] = UserBot(id_ch)
+            user = users[id_ch]
         working.append(message.chat.id)
-        if message.text.split("//")[0] == ("https:" or "http:"):
+        if valid_url(message.text):
             link = message.text
             bot.send_message(message.chat.id, "Your video in processing. Don't try flood! Your all requests ignore, while processing.")
             mp3(link, message)
@@ -33,16 +43,22 @@ def handle_text(message):
             inlineKey.row(*row)
             bot.send_message(message.chat.id, parse.get_names_to_str(n), reply_markup=inlineKey)
         working.remove(message.chat.id)
+        user.update(5)
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     url = str(call.data)
-    if url != '' and call.message.chat.id not in working:
+    user = users.get(call.message.chat.id)
+    if (url != '' and call.message.chat.id not in working) and (user == None or user.update(10)):
         working.append(call.message.chat.id)
         bot.send_message(call.message.chat.id, "Your video in processing. Don't try flood! Your all requests ignore, while processing.")
         mp3(url, call.message, parse_name=True)
         working.remove(call.message.chat.id)
+        if user == None:
+            users[call.message.chat.id] = UserBot(call.message.chat.id)
+        else:
+            user.update(5)
 
 
 def mp3(link, message, parse_name=True):
@@ -77,11 +93,18 @@ def logging(str):
     f.write(temp_str)
     f.close()
 
+def valid_url(url):
+    f = False
+    temp1 = url.split("https://www.")
+    if len(temp1) > 1 and temp1[1].find(".com/watch?v=") != -1:
+        f = True
+    return f
+
 count = 0
 while True:
     try:
         count += 1
-        bot.polling()
+        bot.polling(none_stop=True)
     except Exception as e:
         logging(str(count) + " | " + str(e))
-        time.sleep(15)
+        time.sleep(10)
